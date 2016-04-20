@@ -17,8 +17,11 @@ for (var i = 0; i < 3; i++) {
 var sortedf = sorted.map(function (pts) {
   return function (i, cb) { cb(null, pts[i]) }
 })
+var pointsf = function (i, cb) { cb(null, points[i]) }
 
 var grid = require('../lib/grid.js')
-console.log(grid(sortedf, points.length, 4))
+grid(sortedf, pointsf, points.length, 4, function (err, grid) {
+  console.log(grid)
+})
 
 function cmp (a, b) { return a[0]<b[0]?-1:1 }
