@@ -1,13 +1,13 @@
-var points = [
-  [+1.5,-3.4,+2.0,1000],
-  [-3.3,+0.2,-1.2,1001],
-  [+2.4,-5.5,-8.1,1002],
-  [-4.5,+2.5,+1.9,1003],
-  [-1.6,-4.8,+5.0,1004],
-  [+4.4,-2.3,+9.2,1005],
-  [+5.6,-2.4,-1.1,1006],
-  [-1.9,+5.9,+4.8,1007]
-]
+var points = []
+for (var i = 0; i < 100; i++) {
+  points.push([
+    Math.random() * 20 - 10,
+    Math.random() * 20 - 10,
+    Math.random() * 20 - 10,
+    1000 + i
+  ])
+}
+
 var sorted = []
 for (var i = 0; i < 3; i++) {
   sorted.push(points.map(function (pt, ipt) {
@@ -18,10 +18,19 @@ var sortedf = sorted.map(function (pts) {
   return function (i, cb) { cb(null, pts[i]) }
 })
 var pointsf = function (i, cb) { cb(null, points[i]) }
+var dim = sorted.length
 
-var grid = require('../lib/grid.js')
-grid(sortedf, pointsf, points.length, 4, function (err, grid) {
-  console.log(grid)
+var createGrid = require('../lib/grid.js')
+var kdb = require('../lib/kdb.js')
+var t = 4
+createGrid(sortedf, pointsf, points.length, t, function (err, grid, parts) {
+  if (err) return error(err)
+  kdb(t, dim, grid, parts)
 })
 
 function cmp (a, b) { return a[0]<b[0]?-1:1 }
+
+function error (err) {
+  console.error(err)
+  process.exit(1)
+}
