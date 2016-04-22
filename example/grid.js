@@ -18,19 +18,23 @@ var sortedf = sorted.map(function (pts) {
   return function (i, cb) { cb(null, pts[i]) }
 })
 var pointsf = function (i, cb) { cb(null, points[i]) }
-var dim = sorted.length
 
-var createGrid = require('../lib/grid.js')
-var kdb = require('../lib/kdb.js')
-var t = 4
-createGrid(sortedf, pointsf, points.length, t, function (err, grid, parts) {
-  if (err) return error(err)
-  kdb(t, dim, grid, parts)
-})
+var build = require('../lib/build.js')
+build({
+  t: 4,
+  dim: sorted.length,
+  sorted: sortedf,
+  points: pointsf,
+  length: points.length,
+  chunkLength: 1024,
+  store: function (chunkLength, n, type) {
+    return fdstore(chunkLength, '/tmp/bkd.' + n + '.' + type)
+  }
+}, onbuild)
+
+function onbuild (err) {
+  if (err) console.error(err)
+  else console.log('ok')
+}
 
 function cmp (a, b) { return a[0]<b[0]?-1:1 }
-
-function error (err) {
-  console.error(err)
-  process.exit(1)
-}
