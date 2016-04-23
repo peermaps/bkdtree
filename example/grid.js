@@ -26,6 +26,7 @@ build({
   sorted: sortedf,
   points: pointsf,
   length: points.length,
+  offset: 1,
   chunkLength: 1024,
   store: function (chunkLength, n, type) {
     return fdstore(chunkLength, '/tmp/bkd.' + n + '.' + type)
