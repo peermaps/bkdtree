@@ -1,5 +1,5 @@
 var points = []
-for (var i = 0; i < 100; i++) {
+for (var i = 0; i < 20; i++) {
   points.push([
     Math.random() * 20 - 10,
     Math.random() * 20 - 10,
@@ -19,18 +19,17 @@ var sortedf = sorted.map(function (pts) {
 })
 var pointsf = function (i, cb) { cb(null, points[i]) }
 
+var fdstore = require('fd-chunk-store')
 var build = require('../lib/build.js')
 build({
   t: 4,
   dim: sorted.length,
+  pointSize: 8*3+4, // double,double,double,uint32
   sorted: sortedf,
   points: pointsf,
   length: points.length,
   offset: 1,
-  chunkLength: 1024,
-  store: function (chunkLength, n, type) {
-    return fdstore(chunkLength, '/tmp/bkd.' + n + '.' + type)
-  }
+  store: fdstore(1024, '/tmp/tree')
 }, onbuild)
 
 function onbuild (err) {
